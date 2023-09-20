@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*" # Triggers the workflow on version tags (e.g., v1.0.0)
+
+jobs:
+  release:
+    name: Release with GoReleaser
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.20.x" # Specify the Go version you want to use
+
+      - name: Log in to Docker Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.REGISTRY_SERVER_URL }}
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Set up GoReleaser
+        uses: goreleaser/goreleaser-action@v4
+        with:
+          version: latest
+
+      - name: Run GoReleaser
+        run: goreleaser release --clean
+        env:
+          REGISTRY_SERVER_URL: ${{ secrets.REGISTRY_SERVER_URL }}
+          REGISTRY_REPO: ${{ secrets.REGISTRY_REPO }}

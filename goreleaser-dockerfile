@@ -1,0 +1,14 @@
+# Set the default base image if not provided
+ARG BASE_IMAGE=scratch
+
+# Use the base image argument and specify the platform
+FROM --platform=${TARGETARCH} ${BASE_IMAGE}
+
+# Copy the statically compiled binary into the container
+COPY http-server /http-server
+
+# Set the entrypoint to run the application
+ENTRYPOINT ["/http-server"]
+
+# Expose the port on which the application will run
+EXPOSE 8080

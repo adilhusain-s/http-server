@@ -1,0 +1,83 @@
+version: 2
+
+before:
+  hooks:
+    # You may remove this if you don't use go modules.
+    - go mod tidy
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - ppc64le
+      - s390x
+      - arm64
+
+dockers:
+  # Configuration for scratch base images
+  - image_templates:
+      - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-scratch-amd64"
+    dockerfile: "goreleaser-dockerfile"
+    build_flag_templates:
+      - "--build-arg=BASE_IMAGE=scratch"
+      - "--platform=linux/amd64"
+
+  - image_templates:
+      - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-scratch-s390x"
+    dockerfile: "goreleaser-dockerfile"
+    build_flag_templates:
+      - "--build-arg=BASE_IMAGE=scratch"
+      - "--platform=linux/s390x"
+
+  - image_templates:
+      - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-scratch-ppc64le"
+    dockerfile: "goreleaser-dockerfile"
+    build_flag_templates:
+      - "--build-arg=BASE_IMAGE=scratch"
+      - "--platform=linux/ppc64le"
+
+  # Configuration for alpine base images
+  - image_templates:
+      - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-alpine-amd64"
+    dockerfile: "goreleaser-dockerfile"
+    build_flag_templates:
+      - "--build-arg=BASE_IMAGE=alpine"
+      - "--platform=linux/amd64"
+
+  - image_templates:
+      - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-alpine-s390x"
+    dockerfile: "goreleaser-dockerfile"
+    build_flag_templates:
+      - "--build-arg=BASE_IMAGE=alpine"
+      - "--platform=linux/s390x"
+
+  - image_templates:
+      - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-alpine-ppc64le"
+    dockerfile: "goreleaser-dockerfile"
+    build_flag_templates:
+      - "--build-arg=BASE_IMAGE=alpine"
+      - "--platform=linux/ppc64le"
+
+docker_manifests:
+  - id: scratch-manifest
+    name_template: "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-scratch"
+    image_templates:
+      - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-scratch-amd64"
+      - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-scratch-s390x"
+      - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-scratch-ppc64le"
+    use: docker
+
+  - id: alpine-manifest
+    name_template: "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-alpine"
+    image_templates:
+      - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-alpine-amd64"
+      - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-alpine-s390x"
+      - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-alpine-ppc64le"
+    use: docker
+
+release:
+  mode: keep-existing
+  disable: true

@@ -1,24 +1,25 @@
-FROM golang:1.20-alpine as builder
-# Args & ENVs
+# --- Stage 1: Build the binary
+FROM --platform=$BUILDPLATFORM golang:1.20 AS builder
+
+ARG TARGETARCH
 ENV BUILD_PATH=/go/src/github.com/adilhusain-s/http-server
 
-RUN apk update && apk add --no-cache curl gcc git libc-dev
-# COPY local files
+RUN apt-get update && apt-get install -y curl gcc git libc-dev
+
 WORKDIR ${BUILD_PATH}
 COPY ./ .
 
-# Get go dependencies
-RUN go mod download 
-RUN  go build  -o  http-server main.go
-RUN cp ./http-server /bin/http-server 
+RUN go mod download
 
-# --- Stage 2:
-FROM alpine:3
-# Install dependencies
-RUN apk update && apk add --no-cache ca-certificates tzdata libc6-compat
-# Copy binary from builder
-COPY --from=builder /bin/http-server /http-server
-COPY --from=builder /go/src/github.com/adilhusain-s/http-server/testdata /testdata
-# Run the application on container startup.
-CMD ["/http-server"]
+# Statically compile the Go binary
+RUN CGO_ENABLED=0 GOARCH=${TARGETARCH} go build -o http-server main.go
+
+# --- Stage 2: Create the final minimal image
+FROM --platform=${TARGETARCH} scratch
+
+# Copy the statically compiled binary
+COPY --from=builder /go/src/github.com/adilhusain-s/http-server/http-server /http-server
+
+# Set the entrypoint to run the application
+ENTRYPOINT ["/http-server"]
 EXPOSE 8080
