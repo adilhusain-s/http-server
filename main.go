@@ -1,6 +1,10 @@
 package main
 
 import (
+	"crypto/aes"
+	"encoding/hex"
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -40,4 +44,23 @@ func main() {
 	router.POST("/jwt", handleJwtReq)
 	router.POST("/sensitive", HandleSensitiveAPI)
 	router.Run(":8080")
+}
+
+func DecryptRequest(key []byte, encryptedText string) {
+	ciphertext, _ := hex.DecodeString(encryptedText)
+
+	c, err := aes.NewCipher(key)
+	CheckError(err)
+
+	ptplaintext := make([]byte, len(ciphertext))
+	c.Decrypt(ptplaintext, ciphertext)
+
+	s := string(ptplaintext[:])
+	fmt.Println("DECRYPTED:", s)
+}
+
+func CheckError(err error) {
+	if err != nil {
+		panic(err)
+	}
 }
