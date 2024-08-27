@@ -5,17 +5,22 @@ on:
     tags:
       - "v*.*.*" # Triggers the workflow on version tags (e.g., v1.0.0)
 
+permissions:
+  contents: write # Required for GitHub Actions to push release assets
+
 jobs:
   release:
     name: Release with GoReleaser
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out the code
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required for changelog
 
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: "1.20.x" # Specify the Go version you want to use
 
@@ -26,15 +31,13 @@ jobs:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Set up GoReleaser
-        uses: goreleaser/goreleaser-action@v4
-        with:
-          version: latest
-
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v4
+        uses: goreleaser/goreleaser-action@v6
         with:
-          args: release --clean
+          distribution: goreleaser
+          version: "~> v2" # Specifies the GoReleaser version
+          args: release --clean # Arguments to pass to GoReleaser
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REGISTRY_SERVER_URL: ${{ secrets.REGISTRY_SERVER_URL }}
           REGISTRY_REPO: ${{ secrets.REGISTRY_REPO }}
