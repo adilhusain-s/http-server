@@ -24,6 +24,7 @@ dockers:
     build_flag_templates:
       - "--build-arg=BASE_IMAGE=scratch"
       - "--platform=linux/amd64"
+    goarch: amd64
 
   - image_templates:
       - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-scratch-s390x"
@@ -31,6 +32,7 @@ dockers:
     build_flag_templates:
       - "--build-arg=BASE_IMAGE=scratch"
       - "--platform=linux/s390x"
+    goarch: s390x
 
   - image_templates:
       - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-scratch-ppc64le"
@@ -38,6 +40,7 @@ dockers:
     build_flag_templates:
       - "--build-arg=BASE_IMAGE=scratch"
       - "--platform=linux/ppc64le"
+    goarch: ppc64le
 
   # Configuration for alpine base images
   - image_templates:
@@ -46,6 +49,7 @@ dockers:
     build_flag_templates:
       - "--build-arg=BASE_IMAGE=alpine"
       - "--platform=linux/amd64"
+    goarch: amd64
 
   - image_templates:
       - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-alpine-s390x"
@@ -53,6 +57,7 @@ dockers:
     build_flag_templates:
       - "--build-arg=BASE_IMAGE=alpine"
       - "--platform=linux/s390x"
+    goarch: s390x
 
   - image_templates:
       - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-alpine-ppc64le"
@@ -60,6 +65,7 @@ dockers:
     build_flag_templates:
       - "--build-arg=BASE_IMAGE=alpine"
       - "--platform=linux/ppc64le"
+    goarch: ppc64le
 
 docker_manifests:
   - id: scratch-manifest-with-commit
