@@ -32,7 +32,9 @@ jobs:
           version: latest
 
       - name: Run GoReleaser
-        run: goreleaser release --clean
+        uses: goreleaser/goreleaser-action@v4
+        with:
+          args: release --clean
         env:
           REGISTRY_SERVER_URL: ${{ secrets.REGISTRY_SERVER_URL }}
           REGISTRY_REPO: ${{ secrets.REGISTRY_REPO }}
