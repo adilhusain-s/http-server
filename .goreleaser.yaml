@@ -62,7 +62,7 @@ dockers:
       - "--platform=linux/ppc64le"
 
 docker_manifests:
-  - id: scratch-manifest
+  - id: scratch-manifest-with-commit
     name_template: "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-scratch"
     image_templates:
       - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-scratch-amd64"
@@ -70,8 +70,32 @@ docker_manifests:
       - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-scratch-ppc64le"
     use: docker
 
-  - id: alpine-manifest
+  - id: alpine-manifest-with-commit
     name_template: "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-alpine"
+    image_templates:
+      - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-alpine-amd64"
+      - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-alpine-s390x"
+      - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-alpine-ppc64le"
+    use: docker
+
+  - id: latest-manifest
+    name_template: "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:latest"
+    image_templates:
+      - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-scratch-amd64"
+      - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-scratch-s390x"
+      - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-scratch-ppc64le"
+    use: docker
+
+  - id: scratch-manifest-without-commit
+    name_template: "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:scratch"
+    image_templates:
+      - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-scratch-amd64"
+      - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-scratch-s390x"
+      - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-scratch-ppc64le"
+    use: docker
+
+  - id: alpine-manifest-without-commit
+    name_template: "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:alpine"
     image_templates:
       - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-alpine-amd64"
       - "{{ .Env.REGISTRY_SERVER_URL }}/{{ .Env.REGISTRY_REPO }}/http-server:{{ .ShortCommit }}-alpine-s390x"
